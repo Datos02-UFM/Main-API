@@ -32,10 +32,16 @@ app.use(function(req, res, next) {
 
 app.get("/search/:topic", (req, res) => {
   var topic = req.params.topic;
+
   fetchNews(topic, function(returnValue) {
-    res.json(returnValue);
+    res.json(returnValue + " Source: News");
+    
   });
-  
+
+  fetchBooks(topic, function(returnValue) {
+    res.json(returnValue + " Source: Books");
+  }); 
+
   console.log("Fetching articles of topic: " + req.params.topic)
   var reqId = httpContext.get('reqId');
   const myTopic = req.params.topic
@@ -44,8 +50,7 @@ app.get("/search/:topic", (req, res) => {
     if (err) {
       //go fetch from wikipedia
       console.log("Unable to retrieve from database: " + err)
-      res.sendStatus(500)
-      
+      res.sendStatus(500)    
     }
 
     //return info from db
@@ -59,8 +64,7 @@ app.get("/search/:topic", (req, res) => {
         methode: 'GET',
         uri:'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + myTopic + '&limit=25&namespace=0&format=json',
         json:true
-      };
-    
+      };   
       rp(options)
         .then(function(parseBody){
           topArticles = parseBody[1];
@@ -75,7 +79,6 @@ app.get("/search/:topic", (req, res) => {
           if (err) throw err;
             console.log("1 record inserted");
           });
-          res.json(goEconomist());
         });
     }else{
     res.json(topArticles);
@@ -194,9 +197,11 @@ app.listen(3003, () => {
 function fetchBooks(topic, callback) {
   books.search(topic, function(error, results) {
     if ( ! error ) {
-        console.log(results[0]);
+        console.log("Books: " + results[0]);
+        return(results);
     } else {
         console.log(error);
+        return(0);
     }
 });
 }
@@ -206,10 +211,28 @@ function fetchNews(topic, callback) {
     sources: 'bbc-news, fox-news',
     q: topic,
   }).then(response => {
-    console.log("shesponde " + response);
-    res.send(response)
+    console.log("News: " + response[0]);
+    return(response)
   }).catch(function (err) {
     // Crawling failed...
-    console.log("Exclusion " + err);
+    console.log(err);
+    return(0);
   });
+}
+
+function fetchWiki(topic, userId, callback) {
+  var options={
+    methode: 'GET',
+    uri:'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + topic + '&limit=25&namespace=0&format=json',
+    json:true
+  };
+  rp(options)
+    .then(function(parseBody){
+      topArticles = parseBody[1];
+      return("[{Topic : " + myTopic + ", Top articles: " + topArticles + ", UserId : " + userId + "}]");
+    })
+    .catch(function (err){
+      console.log(err);
+      return(0);
+    });
 }
