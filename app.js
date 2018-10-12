@@ -9,6 +9,8 @@ var httpContext = require('express-http-context');
 const NewsAPI = require('newsapi');
 const newsapi = new NewsAPI('d2a7b45c9c3140e98bd788c8ba842d41');
 var books = require('google-books-search');
+const myLoggers = require('log4js');
+var redis = require('redis');
 
 //logs con timings de requests 
 app.use(morgan('short'));
@@ -23,27 +25,52 @@ app.use(function(req, res, next) {
 app.get("/search/:topic", (req, res) => {
   var topic = req.params.topic;
   var reqId = httpContext.get('reqId');
-  var firstResponse = "";
   console.log("Fetching articles of topic: " + req.params.topic);
-
-  fetchNews(topic, function(returnValue) {
-    res.json(returnValue);
-    //firstResponse = returnValue + " Source: News"
+  //revisa en redis 
+  var client = redis.createClient();
+  client.on('connect', function() {
+      console.log('Redis client connected');
   });
-
-  fetchBooks(topic, function(returnValue) {
-    res.json(returnValue + " Source: Books");
-    firstResponse = returnValue + " Source: News"
-  }); 
-
-  fetchWiki(topic, reqId, function(returnValue) {
-    res.json(returnValue + "Source: Wiki");
-    firstResponse = returnValue + " Source: News"
+  client.on('error', function (err) {
+      console.log('Something went wrong ' + err);
   });
+  client.get(topic, function (error, result) {
+      if (error) {
+          console.log(error);
+          throw error; }
+      //estructura json del resultado
+      console.log(result);
+      //si no esta la info en redis va a wikipedia
+      if (result==null || error){
+        fetchNews(topic, function(returnValue) {
+          res.json(returnValue + " Source: News");
+          var newsResponse = returnValue + " Source: News"
+          //guarda la info en redis
+          client.set(topic, newsResponse, redis.print);
+          console.log('Se guardo en Redis')
+        });
 
-  //res.end(firstResponse);
+        fetchBooks(topic, function(returnValue) {
+          res.json(returnValue + " Source: Books");
+          var booksResponse = returnValue + " Source: News"
+          //guarda la info en redis
+          client.set(topic, booksResponse, redis.print);
+          console.log('Se guardo en Redis')
+        }); 
 
-})
+        fetchWiki(topic, reqId, function(returnValue) {
+          res.json(returnValue + "Source: Wiki");
+          var wikiResponse = returnValue + " Source: News"
+          //guarda la info en redis
+          client.set(topic, wikiResponse, redis.print);
+          console.log('Se guardo en Redis')
+        });
+      }else{
+        console.log('Se encontro en Redis');
+        res.json("[{\"Topic\" : " + myTopic + ", \"Top articles\": " + result + ", \"UserId\" : " + req.params.userId + "}]");
+    }
+  });
+});
 
 
 app.get('/search/:topic/:userId', (req, res) => {
