@@ -67,7 +67,7 @@ app.get("/search/:topic", (req, res) => {
         });
       }else{
         console.log('Se encontro en Redis');
-        res.json("[{\"Topic\" : " + myTopic + ", \"Top articles\": " + result + ", \"UserId\" : " + req.params.userId + "}]");
+        res.json("[{\"Topic\" : " + topic + ", \"Top articles\": " + result + ", \"UserId\" : " + reqId + "}]");
     }
   });
 });
