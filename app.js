@@ -105,8 +105,8 @@ app.get('/history/:userId', (req, res) => {
 })
 
 // localhost:80
-app.listen(80, () => {
-  console.log("Server is up and listening on 80...")
+app.listen(3003, () => {
+  console.log("Server is up and listening on 3003...")
 })
 
 app.get('/', (req, res) => {
