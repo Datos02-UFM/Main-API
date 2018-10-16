@@ -135,16 +135,12 @@ function fetchNews(topic, callback) {
   newsapi.v2.everything({
     q: topic,
   }).then(response => {
-    if (response.length = 0){
       var topHeadlines = [];
       for(i=1; i<response["articles"].length; i++){
         topHeadlines.push(response["articles"][i]["title"]);
       }
       console.log("News: " + topHeadlines);
       callback(topHeadlines)
-    }else{
-      callback(0);
-    }
   }).catch(function (err) {
     // Crawling failed...
     console.log(err);
