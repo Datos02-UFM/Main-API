@@ -133,7 +133,6 @@ function fetchBooks(topic, callback) {
 
 function fetchNews(topic, callback) {
   newsapi.v2.everything({
-    sources: 'bbc-news, fox-news',
     q: topic,
   }).then(response => {
     if (response.length = 0){
@@ -163,7 +162,7 @@ function fetchWiki(topic, callback) {
     .then(function(parseBody){
       topArticles = parseBody[1];
       console.log("Wiki: " + topArticles);
-      callback(topArticles);
+      return(topArticles);
     })
     .catch(function (err){
       console.log(err);
