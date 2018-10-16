@@ -39,17 +39,9 @@ app.get("/search/:topic", (req, res) => {
           console.log(error);
           throw error; }
       //estructura json del resultado
-      console.log(result);
+      console.log("redis: " + result);
       //si no esta la info en redis va a wikipedia
       if (result==null || error){
-        fetchNews(topic, function(returnValue) {
-            res.json(returnValue + " Source: News");
-            var newsResponse = returnValue + " Source: News"
-            //guarda la info en redis
-            client.set(topic, newsResponse, redis.print);
-            console.log('Se guardo en Redis')
-        });
-
         fetchBooks(topic, function(returnValue) {
           res.json(returnValue + " Source: Books");
           var booksResponse = returnValue + " Source: News"
@@ -57,6 +49,14 @@ app.get("/search/:topic", (req, res) => {
           client.set(topic, booksResponse, redis.print);
           console.log('Se guardo en Redis')
         }); 
+
+        fetchNews(topic, function(returnValue) {
+            res.json(returnValue + " Source: News");
+            var newsResponse = returnValue + " Source: News"
+            //guarda la info en redis
+            client.set(topic, newsResponse, redis.print);
+            console.log('Se guardo en Redis')
+        });
 
         fetchWiki(topic, reqId, function(returnValue) {
           res.json(returnValue + "Source: Wiki");
@@ -122,6 +122,7 @@ function fetchBooks(topic, callback) {
         topBooks.push(results[i]["title"]);
       }
       console.log("Books: " + topBooks);
+      callback(topBooks);
     } else {
         console.log(error);
         callback(0);
