@@ -43,31 +43,38 @@ app.get("/search/:topic", (req, res) => {
       //si no esta la info en redis va a wikipedia
       if (result==null || error){
         fetchNews(topic, function(returnValue) {
-            res.json(returnValue + " Source: News");
-            var newsResponse = returnValue + " Source: News"
-            //guarda la info en redis
-            client.set(topic, newsResponse, redis.print);
-            console.log('Se guardo en Redis')
+            if (returnValue != 0){
+              res.json(returnValue + " Source: News");
+              var newsResponse = returnValue + " Source: News";
+              //guarda la info en redis
+              client.set(topic, newsResponse, redis.print);
+              console.log('Se guardo en Redis');
+            }
         });
 
         fetchBooks(topic, function(returnValue) {
-          res.json(returnValue + " Source: Books");
-          var booksResponse = returnValue + " Source: News"
-          //guarda la info en redis
-          client.set(topic, booksResponse, redis.print);
-          console.log('Se guardo en Redis')
+          if (returnValue != 0){
+            res.json(returnValue + " Source: Books");
+            var booksResponse = returnValue + " Source: News";
+            //guarda la info en redis
+            client.set(topic, booksResponse, redis.print);
+            console.log('Se guardo en Redis');
+          }
         }); 
 
         fetchWiki(topic, reqId, function(returnValue) {
-          res.json(returnValue + "Source: Wiki");
-          var wikiResponse = returnValue + " Source: News"
-          //guarda la info en redis
-          client.set(topic, wikiResponse, redis.print);
-          console.log('Se guardo en Redis')
+          if (returnValue != 0){
+            res.json(returnValue + "Source: Wiki");
+            var wikiResponse = returnValue + " Source: News";
+            //guarda la info en redis
+            client.set(topic, wikiResponse, redis.print);
+            console.log('Se guardo en Redis');
+          }
         });
+
       }else{
         console.log('Se encontro en Redis');
-        res.json("[{\"Topic\" : " + topic + ", \"Top articles\": " + result + ", \"UserId\" : " + reqId + "}]");
+        res.send({"Topic": topic, "Top articles": result, "UserId": reqId });
     }
   });
 });
