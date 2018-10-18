@@ -44,7 +44,7 @@ app.get("/search/:topic", (req, res) => {
       if (result==null || error){
         fetchNews(topic, function(returnValue) {
             if (returnValue != 0){
-              res.json(returnValue + " Source: News");
+              res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
               var newsResponse = returnValue + " Source: News";
               //guarda la info en redis
               client.set(topic, newsResponse, redis.print);
@@ -54,7 +54,7 @@ app.get("/search/:topic", (req, res) => {
 
         fetchBooks(topic, function(returnValue) {
           if (returnValue != 0){
-            res.json(returnValue + " Source: Books");
+            res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
             var booksResponse = returnValue + " Source: News";
             //guarda la info en redis
             client.set(topic, booksResponse, redis.print);
@@ -64,7 +64,7 @@ app.get("/search/:topic", (req, res) => {
 
         fetchWiki(topic, reqId, function(returnValue) {
           if (returnValue != 0){
-            res.json(returnValue + "Source: Wiki");
+            res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
             var wikiResponse = returnValue + " Source: News";
             //guarda la info en redis
             client.set(topic, wikiResponse, redis.print);
@@ -74,7 +74,7 @@ app.get("/search/:topic", (req, res) => {
 
       }else{
         console.log('Se encontro en Redis');
-        res.send({"Topic": topic, "Top articles": result, "UserId": reqId });
+        res.send({"Topic": topic, "Result": result, "UserId": reqId });
     }
   });
 });
@@ -131,8 +131,8 @@ function fetchBooks(topic, callback) {
       console.log("Books: " + topBooks);
       callback(topBooks);
     } else {
-        console.log(error);
-        callback(0);
+      console.log(error);
+      callback(0);
     }
 });
 }
