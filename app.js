@@ -114,7 +114,6 @@ app.get('/', (req, res) => {
 
 
 function fetchBooks(topic, callback) {
-  try{
     books.search(topic, function(error, results) {
       if ( ! error ) {
         var topBooks = [];
@@ -122,15 +121,16 @@ function fetchBooks(topic, callback) {
           topBooks.push(results[i]["title"]);
         }
         console.log("Books: " + topBooks);
-        callback(topBooks);
+        try{
+          callback(topBooks);
+        }catch(err){
+          callback(0);
+        }
       } else {
         console.log(error);
         callback(0);
       }
     });
-  }catch(err){
-    callback(0);
-  }
 }
 
 function fetchNews(topic, callback) {
