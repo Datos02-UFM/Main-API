@@ -32,68 +32,6 @@ const connection = mysql.createConnection({
   database: 'MySQL_Datos_2'
 })
 
-app.get("/search/:topic", (req, res) => {
-  var topic = req.params.topic;
-  var reqId = httpContext.get('reqId');
-  console.log("Fetching articles of topic: " + req.params.topic);
-  //revisa en redis 
-  var client = redis.createClient();
-  client.on('connect', function() {
-      console.log('Redis client connected');
-  });
-  client.on('error', function (err) {
-      console.log('Something went wrong ' + err);
-  });
-  client.get(topic, function (error, result) {
-      if (error) {
-          console.log(error);
-          throw error; }
-      //estructura json del resultado
-      console.log("redis: " + result);
-      //si no esta la info en redis va a wikipedia
-      if (result==null || error){
-        fetchNews(topic, function(returnValue) {
-            if (returnValue != 0){
-              res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
-              var newsResponse = returnValue + " Source: News";
-              //guarda la info en redis
-              client.set(topic, newsResponse, redis.print);
-              console.log('Se guardo en Redis');
-            }
-        });
-
-        fetchBooks(topic, function(returnValue) {
-          if (returnValue != 0){
-            res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
-            var booksResponse = returnValue + " Source: News";
-            //guarda la info en redis
-            client.set(topic, booksResponse, redis.print);
-            console.log('Se guardo en Redis');
-          }
-        }); 
-
-        fetchWiki(topic, reqId, function(returnValue) {
-          if (returnValue != 0){
-            res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
-            var wikiResponse = returnValue + " Source: News";
-            //guarda la info en redis
-            client.set(topic, wikiResponse, redis.print);
-            console.log('Se guardo en Redis');
-          }
-        });
-
-      }else{
-        console.log('Se encontro en Redis');
-        res.send({"Topic": topic, "Result": result, "UserId": reqId });
-    }
-  });
-});
-
-
-app.get('/search/:topic/:userId', (req, res) => {
-  
-})
-
 
 app.get("/test", (req, res) => {
   fetchWiki("cat", function(returnValue){
@@ -121,63 +59,11 @@ app.get('/history/:userId', (req, res) => {
   })
 })
 
-// localhost:80
-app.listen(3003, () => {
-  console.log("Server is up and listening on 3003...")
+// localhost:3005
+app.listen(3005, () => {
+  console.log("Server is up and listening on 3005...")
 })
 
 app.get('/', (req, res) => {
   res.json("Datos2 API");
 })
-
-
-function fetchBooks(topic, callback) {
-  books.search(topic, function(error, results) {
-    if ( ! error ) {
-      var topBooks = [];
-      for(i=1; i<results.length; i++){
-        topBooks.push(results[i]["title"]);
-      }
-      console.log("Books: " + topBooks);
-      callback(topBooks);
-    } else {
-      console.log(error);
-      callback(0);
-    }
-});
-}
-
-function fetchNews(topic, callback) {
-  newsapi.v2.everything({
-    q: topic,
-  }).then(response => {
-      var topHeadlines = [];
-      for(i=1; i<response["articles"].length; i++){
-        topHeadlines.push(response["articles"][i]["title"]);
-      }
-      console.log("News: " + topHeadlines);
-      callback(topHeadlines)
-  }).catch(function (err) {
-    // Crawling failed...
-    console.log(err);
-    callback(0);
-  });
-}
-
-function fetchWiki(topic, callback) {
-  var options={
-    methode: 'GET',
-    uri:'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + topic + '&limit=25&namespace=0&format=json',
-    json:true
-  };
-  rp(options)
-    .then(function(parseBody){
-      topArticles = parseBody[1];
-      console.log("Wiki: " + topArticles);
-      return(topArticles);
-    })
-    .catch(function (err){
-      console.log(err);
-      return(0);
-    });
-}

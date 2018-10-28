@@ -86,13 +86,14 @@ app.get("/search/:topic", (req, res) => {
         console.log('Se encontro en Redis');
         res.send({"Topic": topic, "Result": result, "UserId": reqId });
     }
+    //Inserta log del request
+    var sql = "INSERT INTO user_logs (topic, usuario) VALUES ('" + myTopic + "', '" + reqId + "')";
+    connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("1 log inserted");
+    });
   });
 });
-
-
-app.get('/search/:topic/:userId', (req, res) => {
-  
-})
 
 
 app.get("/test", (req, res) => {
@@ -102,26 +103,7 @@ app.get("/test", (req, res) => {
   });
 })
 
-
-app.get('/history/:userId', (req, res) => {
-  console.log("Fetching history by userId")
-
-  const queryString = "SELECT fecha, topic FROM user_logs where usuario = ? "
-  connection.query(queryString, [req.params.userId], (err, rows, fields) => {
-    if (err) {
-      console.log("Failed to query for users: " + err)
-      res.sendStatus(500)
-      return
-      // throw err
-    }
-    var historyUser = rows.map((row) => {
-      return {"Date": row.fecha, "url": "http://localhost:3003/search/" + row.topic + "/" + req.params.userId};
-    })
-    res.json(historyUser)
-  })
-})
-
-// localhost:80
+// localhost:3003
 app.listen(3003, () => {
   console.log("Server is up and listening on 3003...")
 })
