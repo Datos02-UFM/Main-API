@@ -32,9 +32,13 @@ const connection = mysql.createConnection({
   database: 'MySQL_Datos_2'
 })
 
-app.get("/search/:topic", (req, res) => {
+app.get("/search/:topic/:userId?", (req, res) => {
   var topic = req.params.topic;
-  var reqId = httpContext.get('reqId');
+  if (req.params.userId){
+    var reqId = req.params.userId;
+  }else{
+    var reqId = httpContext.get('reqId');
+  }
   console.log("Fetching articles of topic: " + req.params.topic);
   //revisa en redis 
   var client = redis.createClient();
@@ -96,11 +100,14 @@ app.get("/search/:topic", (req, res) => {
 });
 
 
-app.get("/test", (req, res) => {
-  fetchBooks("cat", function(returnValue){
-    //console.log(returnValue);
-      res.json(returnValue);
-  });
+app.get("/search2/:topic/:userId?", (req, res) => {
+  var topic = req.params.topic;
+  if (req.params.userId){
+    var reqId = req.params.userId;
+  }else{
+    var reqId = httpContext.get('reqId');
+  }
+  res.json(reqId);
 })
 
 // localhost:3003
