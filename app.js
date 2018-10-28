@@ -87,7 +87,7 @@ app.get("/search/:topic", (req, res) => {
         res.send({"Topic": topic, "Result": result, "UserId": reqId });
     }
     //Inserta log del request
-    var sql = "INSERT INTO user_logs (topic, usuario) VALUES ('" + myTopic + "', '" + reqId + "')";
+    var sql = "INSERT INTO user_logs (topic, usuario) VALUES ('" + topic + "', '" + reqId + "')";
     connection.query(sql, function (err, result) {
     if (err) throw err;
     console.log("1 log inserted");
