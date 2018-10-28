@@ -97,7 +97,7 @@ app.get("/search/:topic", (req, res) => {
 
 
 app.get("/test", (req, res) => {
-  fetchWiki("cat", function(returnValue){
+  fetchBooks("cat", function(returnValue){
     //console.log(returnValue);
       res.json(returnValue);
   });
@@ -114,19 +114,23 @@ app.get('/', (req, res) => {
 
 
 function fetchBooks(topic, callback) {
-  books.search(topic, function(error, results) {
-    if ( ! error ) {
-      var topBooks = [];
-      for(i=1; i<results.length; i++){
-        topBooks.push(results[i]["title"]);
+  try{
+    books.search(topic, function(error, results) {
+      if ( ! error ) {
+        var topBooks = [];
+        for(i=1; i<results.length; i++){
+          topBooks.push(results[i]["title"]);
+        }
+        console.log("Books: " + topBooks);
+        callback(topBooks);
+      } else {
+        console.log(error);
+        callback(0);
       }
-      console.log("Books: " + topBooks);
-      callback(topBooks);
-    } else {
-      console.log(error);
-      callback(0);
-    }
-});
+    });
+  }catch(err){
+    callback(0);
+  }
 }
 
 function fetchNews(topic, callback) {
