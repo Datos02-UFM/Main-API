@@ -56,33 +56,49 @@ app.get("/search/:topic/:userId?", (req, res) => {
       console.log("redis: " + result);
       //si no esta la info en redis va a wikipedia
       if (result==null || error){
+        var gotReply = true;
         fetchNews(topic, function(returnValue) {
             if (returnValue != 0){
               res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
-              var newsResponse = returnValue + " Source: News";
-              //guarda la info en redis
-              client.set(topic, newsResponse, redis.print);
-              console.log('Se guardo en Redis');
+              console.log("news got reply " + gotReply);
+              if (gotReply = false){
+                var newsResponse = returnValue + " Source: News";
+                //guarda la info en redis
+                client.set(topic, newsResponse, redis.print);
+                saveLog(reqId, topic, returnValue);
+                console.log('Saved mysql and redis');
+                gotReply = true;
+              }
             }
         });
 
         fetchBooks(topic, function(returnValue) {
           if (returnValue != 0){
             res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
-            var booksResponse = returnValue + " Source: News";
-            //guarda la info en redis
-            client.set(topic, booksResponse, redis.print);
-            console.log('Se guardo en Redis');
+            var booksResponse = returnValue + " Source: Books";
+            console.log("books got reply " + gotReply);
+              if (gotReply = false){
+                //guarda la info en redis
+                client.set(topic, booksResponse, redis.print);
+                saveLog(reqId, topic, returnValue);
+                console.log('Saved mysql and redis');
+                gotReply = true;
+              }
           }
         }); 
 
         fetchWiki(topic, reqId, function(returnValue) {
           if (returnValue != 0){
             res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
-            var wikiResponse = returnValue + " Source: News";
-            //guarda la info en redis
-            client.set(topic, wikiResponse, redis.print);
-            console.log('Se guardo en Redis');
+            var wikiResponse = returnValue + " Source: wiki";
+            console.log("news got reply " + gotReply);
+              if (gotReply = false){
+                //guarda la info en redis
+                client.set(topic, wikiResponse, redis.print);
+                saveLog(reqId, topic, returnValue);
+                console.log('Saved mysql and redis');
+                gotReply = true;
+              }
           }
         });
 
@@ -90,12 +106,6 @@ app.get("/search/:topic/:userId?", (req, res) => {
         console.log('Se encontro en Redis');
         res.send({"Topic": topic, "Result": result, "UserId": reqId });
     }
-    //Inserta log del request
-    var sql = "INSERT INTO user_logs (topic, usuario) VALUES ('" + topic + "', '" + reqId + "')";
-    connection.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log("1 log inserted");
-    });
   });
 });
 
@@ -119,6 +129,15 @@ app.get('/', (req, res) => {
   res.json("Datos2 API");
 })
 
+
+function saveLog(userId, topic, result) {
+  //Inserta log del request
+  var sql = "INSERT INTO history (topic, result, usuario) VALUES ('" + topic + "', '" + result + "', '" + userId + "')";
+  connection.query(sql, function (err, result) {
+  if (err) throw err;
+  console.log("1 log inserted");
+  });
+}
 
 function fetchBooks(topic, callback) {
     books.search(topic, function(error, results) {
