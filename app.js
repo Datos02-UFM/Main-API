@@ -132,6 +132,7 @@ app.get('/', (req, res) => {
 
 function saveLog(userId, topic, result) {
   //Inserta log del request
+  console.log("saveLog base de datos");
   var sql = "INSERT INTO history (topic, result, usuario) VALUES ('" + topic + "', '" + result + "', '" + userId + "')";
   connection.query(sql, function (err, result) {
   if (err) throw err;
