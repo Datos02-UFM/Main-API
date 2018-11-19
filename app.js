@@ -123,11 +123,12 @@ app.get('/', (req, res) => {
 function saveLog(userId, topic, result) {
   //Inserta log del request
   console.log("saveLog base de datos");
-  var sql = "INSERT INTO history (topic, result, usuario) VALUES ('" + topic + "', '" + result + "', '" + userId + "')";
-  connection.query(sql, function (err, result) {
-  if (err) throw err;
-  console.log("1 log inserted");
-  });
+  connection.query(
+    "INSERT INTO history (topic, result, usuario) VALUES (?, ?, ?)", [topic, result, userId], function (err, rows) {
+      if (err) throw err;
+      console.log("1 log inserted");
+    }
+  );
 }
 
 function fetchBooks(topic, callback) {
