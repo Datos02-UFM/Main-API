@@ -59,46 +59,36 @@ app.get("/search/:topic/:userId?", (req, res) => {
         var gotReply = true;
         fetchNews(topic, function(returnValue) {
             if (returnValue != 0){
+              var newsResponse = returnValue + " Source: News";
+              //guarda la info en redis
+              client.set(topic, newsResponse, redis.print);
+              saveLog(reqId, topic, returnValue, "News");
+              console.log('Saved mysql and redis');
               res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
-              console.log("news got reply " + gotReply);
-              if (gotReply = false){
-                var newsResponse = returnValue + " Source: News";
-                //guarda la info en redis
-                client.set(topic, newsResponse, redis.print);
-                saveLog(reqId, topic, returnValue);
-                console.log('Saved mysql and redis');
-                gotReply = true;
-              }
             }
         });
 
         fetchBooks(topic, function(returnValue) {
           if (returnValue != 0){
-            res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
             var booksResponse = returnValue + " Source: Books";
             console.log("books got reply " + gotReply);
-              if (gotReply = false){
-                //guarda la info en redis
-                client.set(topic, booksResponse, redis.print);
-                saveLog(reqId, topic, returnValue);
-                console.log('Saved mysql and redis');
-                gotReply = true;
-              }
+            //guarda la info en redis
+            client.set(topic, booksResponse, redis.print);
+            saveLog(reqId, topic, returnValue, "Books");
+            console.log('Saved mysql and redis');
+            res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
           }
         }); 
 
         fetchWiki(topic, reqId, function(returnValue) {
           if (returnValue != 0){
-            res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
             var wikiResponse = returnValue + " Source: wiki";
             console.log("news got reply " + gotReply);
-              if (gotReply = false){
-                //guarda la info en redis
-                client.set(topic, wikiResponse, redis.print);
-                saveLog(reqId, topic, returnValue);
-                console.log('Saved mysql and redis');
-                gotReply = true;
-              }
+            //guarda la info en redis
+            client.set(topic, wikiResponse, redis.print);
+            saveLog(reqId, topic, returnValue, "Wikipedia");
+            console.log('Saved mysql and redis');
+            res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
           }
         });
 
@@ -133,13 +123,15 @@ app.get('/', (req, res) => {
 })
 
 
-function saveLog(userId, topic, result) {
+function saveLog(userId, topic, result, source) {
   //Inserta log del request
-  var sql = "INSERT INTO history (topic, result, usuario) VALUES ('" + topic + "', '" + result + "', '" + userId + "')";
-  connection.query(sql, function (err, result) {
-  if (err) throw err;
-  console.log("1 log inserted");
-  });
+  console.log("saveLog base de datos");
+  connection.query(
+    "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES (?, ?, ?, ?)", [topic, result, userId, source], function (err, rows) {
+      if (err) throw err;
+      console.log("1 log inserted");
+    }
+  );
 }
 
 function fetchBooks(topic, callback) {
