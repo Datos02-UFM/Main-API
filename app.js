@@ -62,7 +62,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
               var newsResponse = returnValue + " Source: News";
               //guarda la info en redis
               client.set(topic, newsResponse, redis.print);
-              saveLog(reqId, topic, returnValue);
+              saveLog(reqId, topic, returnValue, "News");
               console.log('Saved mysql and redis');
               res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
             }
@@ -74,7 +74,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
             console.log("books got reply " + gotReply);
             //guarda la info en redis
             client.set(topic, booksResponse, redis.print);
-            saveLog(reqId, topic, returnValue);
+            saveLog(reqId, topic, returnValue, "Books");
             console.log('Saved mysql and redis');
             res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
           }
@@ -86,7 +86,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
             console.log("news got reply " + gotReply);
             //guarda la info en redis
             client.set(topic, wikiResponse, redis.print);
-            saveLog(reqId, topic, returnValue);
+            saveLog(reqId, topic, returnValue, "Wikipedia");
             console.log('Saved mysql and redis');
             res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
           }
@@ -120,11 +120,11 @@ app.get('/', (req, res) => {
 })
 
 
-function saveLog(userId, topic, result) {
+function saveLog(userId, topic, result, source) {
   //Inserta log del request
   console.log("saveLog base de datos");
   connection.query(
-    "INSERT INTO history (topic, result, usuario) VALUES (?, ?, ?)", [topic, "test", userId], function (err, rows) {
+    "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES (?, ?, ?, ?)", [topic, result, userId, source], function (err, rows) {
       if (err) throw err;
       console.log("1 log inserted");
     }
