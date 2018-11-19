@@ -12,6 +12,7 @@ const newsapi = new NewsAPI('d2a7b45c9c3140e98bd788c8ba842d41');
 var books = require('google-books-search');
 const myLoggers = require('log4js');
 var redis = require('redis');
+const axios = require('axios');
 
 //logs con timings de requests 
 app.use(morgan('short'));
@@ -194,7 +195,20 @@ function postToLoggingAPI(userID, topic) {
     var date = new Date;
     var timestamp = date.getTime();
 
-    app.post("54.163.75.163:3000/log/" + topic + "/" + userID + "/" + timestamp, function (req, res) {
+    axios.post('54.163.75.163:3003/log/', {
+      topic: topic,
+      userID: userID,
+      timestamp: timestamp
+    })
+    .then((res) => {
+      console.log('statusCode: ', res.statusCode);
+      console.log(res);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+
+    app.post("54.163.75.163:3003/log/" + topic + "/" + userID + "/" + timestamp, function (req, res) {
       res.send('POST request to Logging API');
     });
 
