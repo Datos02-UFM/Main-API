@@ -13,6 +13,7 @@ var books = require('google-books-search');
 const myLoggers = require('log4js');
 var redis = require('redis');
 const axios = require('axios');
+const curl = new (require( 'curl-request' ))();
 
 //logs con timings de requests 
 app.use(morgan('short'));
@@ -192,54 +193,18 @@ function fetchWiki(topic, callback) {
 
 function postToLoggingAPI(userID, topic) {
 
-    console.log("entrando nenes");    
+    console.log("entrando a logging api");    
 
     var date = new Date;
     var timestamp = date.getTime();
 
-    var myJSONObject = { 
-      topic: topic,
-      userID: userID,
-      timestamp: timestamp
-     };
-
-    request({
-        url: "http://54.163.75.163/log",
-        method: "POST",
-        json: true,   // <--Very important!!!
-        body: myJSONObject
-    }, function (error, response, body){
-        console.log("response: ", response);
-        console.log("error, ", error);
-    });
-
-
-    // axios.post('/log', {
-    //   topic: topic,
-    //   userID: userID,
-    //   timestamp: timestamp
-    // }, {
-    //   hostname: '54.163.75.163',
-    //   port: '3003', 
-    // })
-    // axios({
-    //   method: 'post',
-    //   url: '/log',
-    //   hostname: '54.163.75.163',
-    //   port: '3003', 
-    //   data: {
-    //     topic: topic,
-    //     userID: userID,
-    //     timestamp: timestamp
-    //   }
-    // // })
-    // .then((res) => {
-    //   console.log('statusCode: ', res.statusCode);
-    //   console.log(res);
-    // })
-    // .catch((error) => {
-    //   console.log('ERRORRRRRRRRRR', error);
-    // })
-
+    curl.get('http://54.163.75.163:3003/log/'+topic+'/'+userID+'/'+timestamp)
+    .then((res) => {
+      console.log("Exito ", res);
+    })
+    .catch((err) => {
+      console.log("Error ", err);
+    })
+  
   }
 
