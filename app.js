@@ -61,7 +61,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
         var gotReply = true;
         fetchNews(topic, function(returnValue) {
             if (returnValue != 0){
-              var newsResponse = returnValue + " Source: News";
+              var newsResponse = returnValue;
               //guarda la info en redis
               client.set(topic, newsResponse, redis.print);
               saveLog(reqId, topic, returnValue, "News");
@@ -72,7 +72,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
 
         fetchBooks(topic, function(returnValue) {
           if (returnValue != 0){
-            var booksResponse = returnValue + " Source: Books";
+            var booksResponse = returnValue;
             console.log("books got reply " + gotReply);
             //guarda la info en redis
             client.set(topic, booksResponse, redis.print);
@@ -84,7 +84,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
 
         fetchWiki(topic, reqId, function(returnValue) {
           if (returnValue != 0){
-            var wikiResponse = returnValue + " Source: wiki";
+            var wikiResponse = returnValue;
             console.log("news got reply " + gotReply);
             //guarda la info en redis
             client.set(topic, wikiResponse, redis.print);
