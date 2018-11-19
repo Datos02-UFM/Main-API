@@ -95,7 +95,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
 
       }else{
         console.log('Se encontro en Redis');
-        res.send({"Topic": topic, "Result": [result], "UserId": reqId });
+        res.send({"Topic": topic, "Result": result, "UserId": reqId });
     }
   });
 
