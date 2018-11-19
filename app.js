@@ -192,8 +192,7 @@ function fetchWiki(topic, callback) {
 
 function postToLoggingAPI(userID, topic) {
 
-    console.log("entrando nenes");
-    
+    console.log("entrando nenes");    
 
     var date = new Date;
     var timestamp = date.getTime();
@@ -208,7 +207,7 @@ function postToLoggingAPI(userID, topic) {
       console.log(res);
     })
     .catch((error) => {
-      console.log(error);
+      console.log('ERRORRRRRRRRRR', error);
     })
 
   }
