@@ -208,9 +208,5 @@ function postToLoggingAPI(userID, topic) {
       console.log(error);
     })
 
-    app.post("54.163.75.163:3003/log/" + topic + "/" + userID + "/" + timestamp, function (req, res) {
-      res.send('POST request to Logging API');
-    });
-
   }
 
