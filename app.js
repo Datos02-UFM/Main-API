@@ -25,11 +25,11 @@ app.use(function(req, res, next) {
 
 //Define conexion a db
 const connection = mysql.createConnection({
-  host: 'mysql-datos-2.cyufope5fgiy.us-east-1.rds.amazonaws.com',
+  host: 'datos2final.cr0c2d7y40q0.us-east-1.rds.amazonaws.com',
   port: 3306,
   user: 'root',
   password: 'root1234',
-  database: 'MySQL_Datos_2'
+  database: 'datosfinal'
 })
 
 app.get("/search/:topic/:userId?", (req, res) => {
@@ -124,7 +124,7 @@ function saveLog(userId, topic, result) {
   //Inserta log del request
   console.log("saveLog base de datos");
   connection.query(
-    "INSERT INTO history (topic, result, usuario) VALUES (?, ?, ?)", [topic, result, userId], function (err, rows) {
+    "INSERT INTO history (topic, result, usuario) VALUES (?, ?, ?)", [topic, "test", userId], function (err, rows) {
       if (err) throw err;
       console.log("1 log inserted");
     }
