@@ -206,8 +206,8 @@ function postToLoggingAPI(userID, topic) {
     axios({
       method: 'post',
       url: '/log',
-      hostname: '54.163.75.163',
-      port: '3003', 
+      hostname: '54.163.75.163:3003',
+      port: '80', 
       data: {
         topic: topic,
         userID: userID,
