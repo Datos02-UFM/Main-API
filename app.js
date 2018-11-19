@@ -197,14 +197,30 @@ function postToLoggingAPI(userID, topic) {
     var date = new Date;
     var timestamp = date.getTime();
 
-    axios.post('/log', {
+    var myJSONObject = { 
       topic: topic,
       userID: userID,
       timestamp: timestamp
-    }, {
-      hostname: '54.163.75.163',
-      port: '3003', 
-    })
+     };
+     
+    request({
+        url: "http://54.163.75.163:3003/log",
+        method: "POST",
+        json: true,   // <--Very important!!!
+        body: myJSONObject
+    }, function (error, response, body){
+        console.log(response);
+    });
+
+
+    // axios.post('/log', {
+    //   topic: topic,
+    //   userID: userID,
+    //   timestamp: timestamp
+    // }, {
+    //   hostname: '54.163.75.163',
+    //   port: '3003', 
+    // })
     // axios({
     //   method: 'post',
     //   url: '/log',
@@ -215,14 +231,14 @@ function postToLoggingAPI(userID, topic) {
     //     userID: userID,
     //     timestamp: timestamp
     //   }
+    // // })
+    // .then((res) => {
+    //   console.log('statusCode: ', res.statusCode);
+    //   console.log(res);
     // })
-    .then((res) => {
-      console.log('statusCode: ', res.statusCode);
-      console.log(res);
-    })
-    .catch((error) => {
-      console.log('ERRORRRRRRRRRR', error);
-    })
+    // .catch((error) => {
+    //   console.log('ERRORRRRRRRRRR', error);
+    // })
 
   }
 
