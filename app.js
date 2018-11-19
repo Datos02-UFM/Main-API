@@ -59,7 +59,6 @@ app.get("/search/:topic/:userId?", (req, res) => {
         var gotReply = true;
         fetchNews(topic, function(returnValue) {
             if (returnValue != 0){
-              res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
               console.log("news got reply " + gotReply);
               if (gotReply = false){
                 var newsResponse = returnValue + " Source: News";
@@ -69,12 +68,12 @@ app.get("/search/:topic/:userId?", (req, res) => {
                 console.log('Saved mysql and redis');
                 gotReply = true;
               }
+              res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
             }
         });
 
         fetchBooks(topic, function(returnValue) {
           if (returnValue != 0){
-            res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
             var booksResponse = returnValue + " Source: Books";
             console.log("books got reply " + gotReply);
               if (gotReply = false){
@@ -84,12 +83,12 @@ app.get("/search/:topic/:userId?", (req, res) => {
                 console.log('Saved mysql and redis');
                 gotReply = true;
               }
+              res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
           }
         }); 
 
         fetchWiki(topic, reqId, function(returnValue) {
           if (returnValue != 0){
-            res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
             var wikiResponse = returnValue + " Source: wiki";
             console.log("news got reply " + gotReply);
               if (gotReply = false){
@@ -99,6 +98,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
                 console.log('Saved mysql and redis');
                 gotReply = true;
               }
+              res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
           }
         });
 
