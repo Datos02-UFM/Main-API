@@ -202,14 +202,15 @@ function postToLoggingAPI(userID, topic) {
       userID: userID,
       timestamp: timestamp
      };
-     
+
     request({
-        url: "http://54.163.75.163:3003/log",
+        url: "http://54.163.75.163/log",
         method: "POST",
         json: true,   // <--Very important!!!
         body: myJSONObject
     }, function (error, response, body){
-        console.log(response);
+        console.log("response: ", response);
+        console.log("error, ", error);
     });
 
 
