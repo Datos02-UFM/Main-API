@@ -197,23 +197,25 @@ function postToLoggingAPI(userID, topic) {
     var date = new Date;
     var timestamp = date.getTime();
 
-    // axios.post('54.163.75.163:3003/log/', {
-    //   topic: topic,
-    //   userID: userID,
-    //   timestamp: timestamp
-    // })
-
-    axios({
-      method: 'post',
-      url: '/log',
-      hostname: '54.163.75.163:3003',
-      port: '80', 
-      data: {
-        topic: topic,
-        userID: userID,
-        timestamp: timestamp
-      }
+    axios.post('/log', {
+      topic: topic,
+      userID: userID,
+      timestamp: timestamp
+    }, {
+      hostname: '54.163.75.163',
+      port: '3003', 
     })
+    // axios({
+    //   method: 'post',
+    //   url: '/log',
+    //   hostname: '54.163.75.163',
+    //   port: '3003', 
+    //   data: {
+    //     topic: topic,
+    //     userID: userID,
+    //     timestamp: timestamp
+    //   }
+    // })
     .then((res) => {
       console.log('statusCode: ', res.statusCode);
       console.log(res);
