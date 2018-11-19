@@ -192,6 +192,9 @@ function fetchWiki(topic, callback) {
 
 function postToLoggingAPI(userID, topic) {
 
+    console.log("entrando nenes");
+    
+
     var date = new Date;
     var timestamp = date.getTime();
 
