@@ -25,11 +25,11 @@ app.use(function(req, res, next) {
 
 //Define conexion a db
 const connection = mysql.createConnection({
-  host: 'mysql-datos-2.cyufope5fgiy.us-east-1.rds.amazonaws.com',
+  host: 'datos2final.cr0c2d7y40q0.us-east-1.rds.amazonaws.com',
   port: 3306,
   user: 'root',
   password: 'root1234',
-  database: 'MySQL_Datos_2'
+  database: 'datosfinal'
 })
 
 app.get("/search/:topic/:userId?", (req, res) => {
@@ -107,6 +107,9 @@ app.get("/search/:topic/:userId?", (req, res) => {
         res.send({"Topic": topic, "Result": result, "UserId": reqId });
     }
   });
+
+  postToLoggingAPI(reqId, topic);
+
 });
 
 
@@ -193,3 +196,15 @@ function fetchWiki(topic, callback) {
       return(0);
     });
 }
+
+function postToLoggingAPI(userID, topic) {
+
+    var date = new Date;
+    var timestamp = date.getTime();
+
+    app.post("54.163.75.163:3000/log/" + topic + "/" + userID + "/" + timestamp, function (req, res) {
+      res.send('POST request to Logging API');
+    });
+
+  }
+
