@@ -68,7 +68,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
               console.log("News got reply " + gotReply);
               if (gotReply = true){
                 gotReply = false;
-                res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
+                res.end({"Topic": topic, "Result": returnValue, "UserId": reqId});
               }
             }
         });
@@ -82,7 +82,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
             console.log("books got reply " + gotReply);
             if (gotReply = true){
               gotReply = false;
-              res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
+              res.end({"Topic": topic, "Result": returnValue, "UserId": reqId});
             }
           }
         }); 
@@ -94,10 +94,10 @@ app.get("/search/:topic/:userId?", (req, res) => {
             //guarda la info en redis
             client.set(topic, wikiResponse, redis.print);
             saveLog(reqId, topic, returnValue.toString(), "Wikipedia");
-            console.log("wiki got reply " + gotReply);
             if (gotReply = true){
               gotReply = false;
-              res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
+              console.log(returnValue[0]);
+	      res.end({"Topic": topic, "Result": returnValue.toString(), "UserId": reqId});
             }
           }
         });
