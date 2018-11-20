@@ -65,7 +65,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
                 //guarda la info en redis
                 client.set(topic, newsResponse.toString(), redis.print);
               }
-              saveLog(reqId, topic, newsResponse, "News");
+              saveLog(reqId, topic, newsResponse.toString(), "News");
             }
         });
 
@@ -89,7 +89,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
               client.set(topic, wikiResponse, redis.print);
               res.send({"Topic": topic, "Result": wikiResponse, "UserId": reqId});
             }
-            saveLog(reqId, topic, wikiResponse, "Wikipedia");
+            saveLog(reqId, topic, wikiResponse.toString(), "Wikipedia");
           }
         });
 
