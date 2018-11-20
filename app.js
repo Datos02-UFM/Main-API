@@ -184,12 +184,15 @@ function fetchWiki(topic, callback) {
     .then(function(parseBody){
       topArticles = parseBody[1];
       console.log("Wiki: " + topArticles);
-      return(topArticles);
     })
     .catch(function (err){
       console.log(err);
-      return(0);
-    });
+      callback(0);
+    })
+    .finally(function(parseBody) {
+      topArticles = parseBody[1];
+      callback(topArticles);
+   });
 }
 
 function postToLoggingAPI(userID, topic) {
