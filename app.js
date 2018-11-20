@@ -62,9 +62,9 @@ app.get("/search/:topic/:userId?", (req, res) => {
               var newsResponse = returnValue;
               if (!(res.headersSent)){
                 res.send({"Topic": topic, "Result": newsResponse, "UserId": reqId});
+                //guarda la info en redis
+                client.set(topic, newsResponse.toString(), redis.print);
               }
-              //guarda la info en redis
-              client.set(topic, newsResponse.toString(), redis.print);
               saveLog(reqId, topic, newsResponse, "News");
             }
         });
@@ -74,9 +74,9 @@ app.get("/search/:topic/:userId?", (req, res) => {
             var booksResponse = returnValue;
             if (!(res.headersSent)){
               res.send({"Topic": topic, "Result": booksResponse, "UserId": reqId});
+              //guarda la info en redis
+              client.set(topic, booksResponse.toString(), redis.print);
             }
-            //guarda la info en redis
-            client.set(topic, booksResponse.toString(), redis.print);
             saveLog(reqId, topic, returnValue, "Books");
           }
         }); 
@@ -85,10 +85,10 @@ app.get("/search/:topic/:userId?", (req, res) => {
           if (returnValue != 0){
             var wikiResponse = returnValue.toString();
             if (!(res.headersSent)){
+              //guarda la info en redis
+              client.set(topic, wikiResponse, redis.print);
               res.send({"Topic": topic, "Result": wikiResponse, "UserId": reqId});
             }
-            //guarda la info en redis
-            client.set(topic, wikiResponse, redis.print);
             saveLog(reqId, topic, wikiResponse, "Wikipedia");
           }
         });
