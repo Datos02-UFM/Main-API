@@ -89,7 +89,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
               client.set(topic, wikiResponse, redis.print);
               res.send({"Topic": topic, "Result": wikiResponse, "UserId": reqId});
             }
-            saveLog(reqId, topic, returnValue.toString(), "Wikipedia");
+            saveLog(reqId, topic, returnValue.toString().substring(0,750), "Wikipedia");
           }
         });
 
