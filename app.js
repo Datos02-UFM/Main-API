@@ -12,7 +12,6 @@ const newsapi = new NewsAPI('d2a7b45c9c3140e98bd788c8ba842d41');
 var books = require('google-books-search');
 const myLoggers = require('log4js');
 var redis = require('redis');
-const axios = require('axios');
 const curl = new (require( 'curl-request' ))();
 
 //logs con timings de requests 
