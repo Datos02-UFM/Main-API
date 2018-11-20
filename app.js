@@ -101,19 +101,13 @@ app.get("/search/:topic/:userId?", (req, res) => {
     }
   });
 
-  //postToLoggingAPI(reqId, topic);
+  postToLoggingAPI(reqId, topic);
 
 });
 
 
 app.get("/search2/:topic/:userId?", (req, res) => {
-  var topic = req.params.topic;
-  if (req.params.userId){
-    var reqId = req.params.userId;
-  }else{
-    var reqId = httpContext.get('reqId');
-  }
-  res.json(reqId);
+  
 })
 
 // localhost:3003
@@ -183,14 +177,13 @@ function fetchWiki(topic, callback) {
   rp(options)
     .then(function(parseBody){
       topArticles = parseBody[1];
-      console.log("Wiki: " + topArticles);
     })
     .catch(function (err){
       console.log(err);
       callback(0);
     })
-    .finally(function(parseBody) {
-      topArticles = parseBody[1];
+    .finally(function() {
+      console.log("Wiki: " + topArticles);
       callback(topArticles);
    });
 }
