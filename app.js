@@ -83,7 +83,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
 
         fetchWiki(topic, function(returnValue) {
           if (returnValue != 0){
-            var wikiResponse = returnValue.toString();
+            var wikiResponse = returnValue.toString().split(",");
             if (!(res.headersSent)){
               //guarda la info en redis
               client.set(topic, wikiResponse, redis.print);
@@ -95,7 +95,8 @@ app.get("/search/:topic/:userId?", (req, res) => {
 
         }else{
           console.log('Se encontro en Redis');
-          res.send({"Topic": topic, "Result": result, "UserId": reqId });
+          var redisResponse = result.toString().split(",");
+          res.send({"Topic": topic, "Result": redisResponse, "UserId": reqId });
       }
     });
 
@@ -105,6 +106,23 @@ app.get("/search/:topic/:userId?", (req, res) => {
 
 
 app.get("/search2/:topic/:userId?", (req, res) => {
+  var topic = req.params.topic;
+  if (req.params.userId){
+    var reqId = req.params.userId;
+  }else{
+    var reqId = httpContext.get('reqId');
+  }
+  fetchWiki(topic, function(returnValue) {
+    if (returnValue != 0){
+      var wikiResponse = returnValue.toString().split(",");
+      if (!(res.headersSent)){
+        //guarda la info en redis
+        //client.set(topic, wikiResponse, redis.print);
+        res.send({"Topic": topic, "Result": wikiResponse, "UserId": reqId});
+      }
+      saveLog(reqId, topic, wikiResponse, "Wikipedia");
+    }
+  });
 
 })
 
