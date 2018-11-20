@@ -65,7 +65,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
               //guarda la info en redis
               client.set(topic, newsResponse, redis.print);
               saveLog(reqId, topic, returnValue, "News");
-              console.log('Saved mysql and redis');
+              console.log('News saved mysql and redis');
               res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
             }
         });
@@ -77,7 +77,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
             //guarda la info en redis
             client.set(topic, booksResponse, redis.print);
             saveLog(reqId, topic, returnValue, "Books");
-            console.log('Saved mysql and redis');
+            console.log('Books saved mysql and redis');
             res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
           }
         }); 
@@ -85,11 +85,11 @@ app.get("/search/:topic/:userId?", (req, res) => {
         fetchWiki(topic, reqId, function(returnValue) {
           if (returnValue != 0){
             var wikiResponse = returnValue;
-            console.log("news got reply " + gotReply);
+            console.log("wiki got reply " + gotReply);
             //guarda la info en redis
             client.set(topic, wikiResponse, redis.print);
             saveLog(reqId, topic, returnValue, "Wikipedia");
-            console.log('Saved mysql and redis');
+            console.log('Wiki saved mysql and redis');
             res.send({"Topic": topic, "Result": returnValue, "UserId": reqId});
           }
         });
