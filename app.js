@@ -86,10 +86,10 @@ app.get("/search/:topic/:userId?", (req, res) => {
             var wikiResponse = returnValue.toString().split(",");
             if (!(res.headersSent)){
               //guarda la info en redis
-              client.set(topic, wikiResponse, redis.print);
+              client.set(topic, wikiResponse.toString(), redis.print);
               res.send({"Topic": topic, "Result": wikiResponse, "UserId": reqId});
             }
-            saveLog(reqId, topic, returnValue.toString().substring(0,750), "Wikipedia");
+            saveLog(reqId, topic, returnValue, "Wikipedia");
           }
         });
 
