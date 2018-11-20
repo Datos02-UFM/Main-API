@@ -62,6 +62,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
         fetchNews(topic, function(returnValue) {
             if (returnValue != 0){
               var newsResponse = returnValue;
+              console.log("books got reply " + gotReply);
               //guarda la info en redis
               client.set(topic, newsResponse.toString(), redis.print);
               saveLog(reqId, topic, returnValue, "News");
