@@ -83,6 +83,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
         }); 
 
         fetchWiki(topic, reqId, function(returnValue) {
+          console.log("wiki got " + returnValue);
           if (returnValue != 0){
             var wikiResponse = returnValue;
             console.log("wiki got reply " + gotReply);
