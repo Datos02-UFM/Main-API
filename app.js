@@ -98,6 +98,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
           console.log('Se encontro en Redis');
           var redisResponse = result.toString().split(",");
           res.send({"Topic": topic, "Result": redisResponse, "UserId": reqId });
+          saveLog(reqId, topic, result, "Redis");
       }
     });
 });
