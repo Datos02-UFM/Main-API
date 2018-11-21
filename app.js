@@ -40,6 +40,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
   }else{
     var reqId = httpContext.get('reqId');
   }
+  postToLoggingAPI(reqId, topic);
   console.log("Fetching articles of topic: " + req.params.topic);
   //revisa en redis 
   var client = redis.createClient();
@@ -99,9 +100,6 @@ app.get("/search/:topic/:userId?", (req, res) => {
           res.send({"Topic": topic, "Result": redisResponse, "UserId": reqId });
       }
     });
-
-  postToLoggingAPI(reqId, topic);
-
 });
 
 
