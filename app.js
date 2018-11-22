@@ -156,7 +156,7 @@ function saveLog(arr) {
     row.push(arr[i]["Topic"].toString(), arr[i]["Result"].toString(), arr[i]["UserId"].toString(), arr[i]["Source"].toString());
     sqlArray.push(row);
   }
-  console.log(sqlArray);
+  //console.log(sqlArray);
   connection.query(
     "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES ?", [sqlArray],
     function (err, rows) {
