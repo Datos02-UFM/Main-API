@@ -12,7 +12,7 @@ const newsapi = new NewsAPI('d2a7b45c9c3140e98bd788c8ba842d41');
 var books = require('google-books-search');
 const myLoggers = require('log4js');
 var redis = require('redis');
-const curl = new (require( 'curl-request' ))();
+//const curl = new (require( 'curl-request' ))();
 
 //logs con timings de requests 
 app.use(morgan('short'));
@@ -40,7 +40,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
   }else{
     var reqId = httpContext.get('reqId');
   }
-  postToLoggingAPI(reqId, topic);
+  //postToLoggingAPI(reqId, topic);
   console.log("Fetching articles of topic: " + req.params.topic);
   //revisa en redis 
   var client = redis.createClient();
@@ -54,19 +54,17 @@ app.get("/search/:topic/:userId?", (req, res) => {
       if (error) {
           console.log(error);
           throw error; }
-      //estructura json del resultado
       //console.log("redis: " + result);
-      //si no esta la info en redis va a wikipedia
       if (result==null || error){
+        results = [];
         fetchNews(topic, function(returnValue) {
             if (returnValue != 0){
               var newsResponse = returnValue;
               if (!(res.headersSent)){
                 res.send({"Topic": topic, "Result": newsResponse, "UserId": reqId});
-                //guarda la info en redis
                 client.set(topic, newsResponse.toString(), redis.print);
               }
-              saveLog(reqId, topic, returnValue, "News");
+              results.push({"UserId":reqId, "Topic": topic, "Result": newsResponse, "Source": "News" });
             }
         });
 
@@ -75,10 +73,10 @@ app.get("/search/:topic/:userId?", (req, res) => {
             var booksResponse = returnValue;
             if (!(res.headersSent)){
               res.send({"Topic": topic, "Result": booksResponse, "UserId": reqId});
-              //guarda la info en redis
               client.set(topic, booksResponse.toString(), redis.print);
             }
-            saveLog(reqId, topic, returnValue, "Books");
+            results.push({"UserId":reqId, "Topic": topic, "Result": booksResponse, "Source": "Books" });
+            saveLog(results);
           }
         }); 
 
@@ -86,11 +84,10 @@ app.get("/search/:topic/:userId?", (req, res) => {
           if (returnValue != 0){
             var wikiResponse = returnValue.toString().split(",");
             if (!(res.headersSent)){
-              //guarda la info en redis
               client.set(topic, wikiResponse.toString(), redis.print);
               res.send({"Topic": topic, "Result": wikiResponse, "UserId": reqId});
             }
-            saveLog(reqId, topic, returnValue, "Wikipedia");
+            results.push({"UserId":reqId, "Topic": topic, "Result": wikiResponse, "Source": "Wikipedia" });
           }
         });
 
@@ -105,6 +102,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
 
 
 app.get("/fetch/:topic/:userId?", (req, res) => {
+  var results = [];
   var topic = req.params.topic;
   if (req.params.userId){
     var reqId = req.params.userId;
@@ -150,7 +148,25 @@ app.get('/', (req, res) => {
   res.json("Datos2 API");
 })
 
+function saveLog(arr) {
+  //Inserta log del request
+  var sqlArray = [];
+  for(i=0; i<arr.length; i++){
+    let row = [];
+    row.push(arr[i]["Topic"].toString(), arr[i]["Result"].toString(), arr[i]["UserId"].toString(), arr[i]["Source"].toString());
+    sqlArray.push(row);
+  }
+  console.log(sqlArray);
+  connection.query(
+    "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES ?", [sqlArray],
+    function (err, rows) {
+      if (err) throw err;
+      console.log("sql log inserted");
+    }
+  );
+}
 
+/*
 function saveLog(userId, topic, result, source) {
   //Inserta log del request
   //console.log("saveLog base de datos");
@@ -166,6 +182,7 @@ function saveLog(userId, topic, result, source) {
     }
   );
 }
+*/
 
 function fetchBooks(topic, callback) {
     books.search(topic, function(error, results) {
