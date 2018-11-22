@@ -191,7 +191,7 @@ function fetchBooks(topic, callback) {
         for(i=1; i<results.length; i++){
           topBooks.push(results[i]["title"]);
         }
-        console.log("Books: " + topBooks);
+        //console.log("Books: " + topBooks);
         try{
           callback(topBooks);
         }catch(err){
@@ -212,7 +212,7 @@ function fetchNews(topic, callback) {
       for(i=1; i<response["articles"].length; i++){
         topHeadlines.push(response["articles"][i]["title"]);
       }
-      console.log("News: " + topHeadlines);
+      //console.log("News: " + topHeadlines);
       callback(topHeadlines)
   }).catch(function (err) {
     // Crawling failed...
@@ -236,7 +236,7 @@ function fetchWiki(topic, callback) {
       callback(0);
     })
     .finally(function() {
-      console.log("Wiki: " + topArticles);
+      //console.log("Wiki: " + topArticles);
       callback(topArticles);
    });
 }
