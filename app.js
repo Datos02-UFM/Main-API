@@ -95,7 +95,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
           console.log('Redis');
           var redisResponse = result.toString().split(",");
           res.send({"Topic": topic, "Result": redisResponse, "UserId": reqId });
-          saveLog(reqId, topic, result, "Redis");
+          saveLogRedis(reqId, topic, result, "Redis");
       }
     });
 });
@@ -166,23 +166,19 @@ function saveLog(arr) {
   );
 }
 
-/*
-function saveLog(userId, topic, result, source) {
+
+function saveLogRedis(userId, topic, result, source) {
   //Inserta log del request
   //console.log("saveLog base de datos");
   connection.query(
-    "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES (?, ?, ?, ?)", 
-    [
-      [topic, result.toString(), userId, source],
-      [topic, result.toString(), userId, source]
-    ],
+    "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES (?, ?, ?, ?)", [topic, result.toString(), userId, source],
     function (err, rows) {
       if (err) throw err;
       console.log("sql log inserted");
     }
   );
 }
-*/
+
 
 function fetchBooks(topic, callback) {
     books.search(topic, function(error, results) {
