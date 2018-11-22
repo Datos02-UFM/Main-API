@@ -161,7 +161,7 @@ function saveLog(arr) {
     "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES ?", [sqlArray],
     function (err, rows) {
       if (err) console.log(err);
-      console.log("sql log inserted");
+      console.log("sqls log inserted");
     }
   );
 }
@@ -173,7 +173,7 @@ function saveLogRedis(userId, topic, result, source) {
   connection.query(
     "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES (?, ?, ?, ?)", [topic, result.toString(), userId, source],function (err, rows) {
       if (err) throw err;
-      console.log("sql log inserted");
+      console.log("sqlRedis log inserted");
     }
   );
 }
