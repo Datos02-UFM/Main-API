@@ -45,17 +45,17 @@ app.get("/search/:topic/:userId?", (req, res) => {
   //revisa en redis 
   var client = redis.createClient();
   client.on('connect', function() {
-      console.log('Redis client connected');
+      //console.log('Redis client connected');
   });
   client.on('error', function (err) {
-      console.log('Something went wrong ' + err);
+      //console.log('Something went wrong ' + err);
   });
   client.get(topic, function (error, result) {
       if (error) {
           console.log(error);
           throw error; }
       //estructura json del resultado
-      console.log("redis: " + result);
+      //console.log("redis: " + result);
       //si no esta la info en redis va a wikipedia
       if (result==null || error){
         fetchNews(topic, function(returnValue) {
@@ -95,7 +95,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
         });
 
         }else{
-          console.log('Se encontro en Redis');
+          console.log('Redis');
           var redisResponse = result.toString().split(",");
           res.send({"Topic": topic, "Result": redisResponse, "UserId": reqId });
           saveLog(reqId, topic, result, "Redis");
@@ -137,11 +137,11 @@ app.get('/', (req, res) => {
 
 function saveLog(userId, topic, result, source) {
   //Inserta log del request
-  console.log("saveLog base de datos");
+  //console.log("saveLog base de datos");
   connection.query(
     "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES (?, ?, ?, ?)", [topic, result.toString(), userId, source], function (err, rows) {
       if (err) throw err;
-      console.log("1 log inserted");
+      console.log("sql log inserted");
     }
   );
 }
@@ -153,14 +153,14 @@ function fetchBooks(topic, callback) {
         for(i=1; i<results.length; i++){
           topBooks.push(results[i]["title"]);
         }
-        console.log("Books: " + topBooks);
+        //console.log("Books: " + topBooks);
         try{
           callback(topBooks);
         }catch(err){
           callback(0);
         }
       } else {
-        console.log(error);
+        //console.log(error);
         callback(0);
       }
     });
@@ -174,11 +174,11 @@ function fetchNews(topic, callback) {
       for(i=1; i<response["articles"].length; i++){
         topHeadlines.push(response["articles"][i]["title"]);
       }
-      console.log("News: " + topHeadlines);
+      //console.log("News: " + topHeadlines);
       callback(topHeadlines)
   }).catch(function (err) {
     // Crawling failed...
-    console.log(err);
+    //console.log(err);
     callback(0);
   });
 }
@@ -194,11 +194,11 @@ function fetchWiki(topic, callback) {
       topArticles = parseBody[1];
     })
     .catch(function (err){
-      console.log(err);
+      //console.log(err);
       callback(0);
     })
     .finally(function() {
-      console.log("Wiki: " + topArticles);
+      //console.log("Wiki: " + topArticles);
       callback(topArticles);
    });
 }
@@ -209,9 +209,9 @@ function postToLoggingAPI(userID, topic) {
     var timestamp = date.getTime();
     curl.get('http://54.163.75.163:3003/log/'+topic+'/'+userID+'/'+timestamp)
     .then((res) => {
-      console.log("Exito ", res);
+      console.log("Exito loginAPI");
     })
     .catch((err) => {
-      console.log("Error ", err);
+      console.log("Error loginAPI ", err);
     })
 }
