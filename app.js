@@ -160,7 +160,7 @@ function saveLog(arr) {
   connection.query(
     "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES ?", [sqlArray],
     function (err, rows) {
-      if (err) throw err;
+      if (err) console.log(err);
       console.log("sql log inserted");
     }
   );
