@@ -125,6 +125,69 @@ app.get("/search2/:topic/:userId?", (req, res) => {
 
 })
 
+
+app.get("/fetch/:topic/:userId?", (req, res) => {
+  var topic = req.params.topic;
+  if (req.params.userId){
+    var reqId = req.params.userId;
+  }else{
+    var reqId = httpContext.get('reqId');
+  }
+  console.log("Fetching articles of topic: " + req.params.topic);
+  fetchNews(topic, function(returnValue) {
+    if (returnValue != 0){
+      var newsResponse = returnValue;
+      if (!(res.headersSent)){
+        res.send({"Topic": topic, "Result": newsResponse, "UserId": reqId});
+      }
+      saveLog(reqId, topic, returnValue, "News");
+    }
+  });
+
+  fetchBooks(topic, function(returnValue) {
+    if (returnValue != 0){
+      var booksResponse = returnValue;
+      if (!(res.headersSent)){
+        res.send({"Topic": topic, "Result": booksResponse, "UserId": reqId});
+      }
+      saveLog(reqId, topic, returnValue, "Books");
+    }
+  }); 
+
+  fetchWiki(topic, function(returnValue) {
+    if (returnValue != 0){
+      var wikiResponse = returnValue.toString().split(",");
+      if (!(res.headersSent)){
+        res.send({"Topic": topic, "Result": wikiResponse, "UserId": reqId});
+      }
+      saveLog(reqId, topic, returnValue, "Wikipedia");
+    }
+  });
+
+});
+
+
+app.get("/search2/:topic/:userId?", (req, res) => {
+  var topic = req.params.topic;
+  if (req.params.userId){
+    var reqId = req.params.userId;
+  }else{
+    var reqId = httpContext.get('reqId');
+  }
+  fetchWiki(topic, function(returnValue) {
+    if (returnValue != 0){
+      var wikiResponse = returnValue.toString().split(",");
+      if (!(res.headersSent)){
+        //guarda la info en redis
+        //client.set(topic, wikiResponse, redis.print);
+        res.send({"Topic": topic, "Result": wikiResponse, "UserId": reqId});
+      }
+      saveLog(reqId, topic, wikiResponse, "Wikipedia");
+    }
+  });
+
+})
+
 // localhost:3003
 app.listen(3003, () => {
   console.log("Server is up and listening on 3003...")
