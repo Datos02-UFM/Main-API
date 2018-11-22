@@ -104,28 +104,6 @@ app.get("/search/:topic/:userId?", (req, res) => {
 });
 
 
-app.get("/search2/:topic/:userId?", (req, res) => {
-  var topic = req.params.topic;
-  if (req.params.userId){
-    var reqId = req.params.userId;
-  }else{
-    var reqId = httpContext.get('reqId');
-  }
-  fetchWiki(topic, function(returnValue) {
-    if (returnValue != 0){
-      var wikiResponse = returnValue.toString().split(",");
-      if (!(res.headersSent)){
-        //guarda la info en redis
-        //client.set(topic, wikiResponse, redis.print);
-        res.send({"Topic": topic, "Result": wikiResponse, "UserId": reqId});
-      }
-      saveLog(reqId, topic, wikiResponse, "Wikipedia");
-    }
-  });
-
-})
-
-
 app.get("/fetch/:topic/:userId?", (req, res) => {
   var topic = req.params.topic;
   if (req.params.userId){
@@ -138,7 +116,7 @@ app.get("/fetch/:topic/:userId?", (req, res) => {
     if (returnValue != 0){
       var newsResponse = returnValue;
       if (!(res.headersSent)){
-        res.send({"Topic": topic, "Result": newsResponse, "UserId": reqId});
+        res.send({"Result": newsResponse, "Source": "News"});
       }
     }
   });
@@ -147,7 +125,7 @@ app.get("/fetch/:topic/:userId?", (req, res) => {
     if (returnValue != 0){
       var booksResponse = returnValue;
       if (!(res.headersSent)){
-        res.send({"Topic": topic, "Result": booksResponse, "UserId": reqId});
+        res.send({"Result": booksResponse, "Source": "Books"});
       }
     }
   }); 
@@ -156,34 +134,12 @@ app.get("/fetch/:topic/:userId?", (req, res) => {
     if (returnValue != 0){
       var wikiResponse = returnValue.toString().split(",");
       if (!(res.headersSent)){
-        res.send({"Topic": topic, "Result": wikiResponse, "UserId": reqId});
+        res.send({"Result": wikiResponse, "Source": "Wikipedia"});
       }
     }
   });
 
 });
-
-
-app.get("/search2/:topic/:userId?", (req, res) => {
-  var topic = req.params.topic;
-  if (req.params.userId){
-    var reqId = req.params.userId;
-  }else{
-    var reqId = httpContext.get('reqId');
-  }
-  fetchWiki(topic, function(returnValue) {
-    if (returnValue != 0){
-      var wikiResponse = returnValue.toString().split(",");
-      if (!(res.headersSent)){
-        //guarda la info en redis
-        //client.set(topic, wikiResponse, redis.print);
-        res.send({"Topic": topic, "Result": wikiResponse, "UserId": reqId});
-      }
-      saveLog(reqId, topic, wikiResponse, "Wikipedia");
-    }
-  });
-
-})
 
 // localhost:3003
 app.listen(3003, () => {
@@ -199,7 +155,12 @@ function saveLog(userId, topic, result, source) {
   //Inserta log del request
   //console.log("saveLog base de datos");
   connection.query(
-    "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES (?, ?, ?, ?)", [topic, result.toString(), userId, source], function (err, rows) {
+    "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES (?, ?, ?, ?)", 
+    [
+      [topic, result.toString(), userId, source],
+      [topic, result.toString(), userId, source]
+    ],
+    function (err, rows) {
       if (err) throw err;
       console.log("sql log inserted");
     }
