@@ -171,8 +171,7 @@ function saveLogRedis(userId, topic, result, source) {
   //Inserta log del request
   //console.log("saveLog base de datos");
   connection.query(
-    "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES (?, ?, ?, ?)", [topic, result.toString(), userId, source],
-    function (err, rows) {
+    "INSERT INTO history (topic, result, usuario, sourceAPI) VALUES (?, ?, ?, ?)", [topic, result.toString(), userId, source],function (err, rows) {
       if (err) throw err;
       console.log("sql log inserted");
     }
