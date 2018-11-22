@@ -53,7 +53,8 @@ app.get("/search/:topic/:userId?", (req, res) => {
   client.get(topic, function (error, result) {
       if (error) {
           console.log(error);
-          throw error; }
+          throw error; 
+        }
       //console.log("redis: " + result);
       if (result==null || error){
         results = [];
@@ -84,8 +85,8 @@ app.get("/search/:topic/:userId?", (req, res) => {
           if (returnValue != 0){
             var wikiResponse = returnValue.toString().split(",");
             if (!(res.headersSent)){
-              client.set(topic, wikiResponse.toString(), redis.print);
               res.send({"Topic": topic, "Result": wikiResponse, "UserId": reqId});
+              client.set(topic, wikiResponse.toString(), redis.print);
             }
             results.push({"UserId":reqId, "Topic": topic, "Result": wikiResponse, "Source": "Wikipedia" });
           }
@@ -95,7 +96,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
           console.log('Redis');
           var redisResponse = result.toString().split(",");
           res.send({"Topic": topic, "Result": redisResponse, "UserId": reqId });
-          saveLogRedis(reqId, topic, result, "Redis");
+          // saveLogRedis(reqId, topic, result, "Redis");
       }
     });
 });
@@ -139,9 +140,9 @@ app.get("/fetch/:topic/:userId?", (req, res) => {
 
 });
 
-// localhost:3003
-app.listen(3003, () => {
-  console.log("Server is up and listening on 3003...")
+// localhost:3000
+app.listen(3000, () => {
+  console.log("Server is up and listening on 3000...")
 })
 
 app.get('/', (req, res) => {
@@ -239,9 +240,7 @@ function fetchWiki(topic, callback) {
 
 function postToLoggingAPI(userID, topic) {
     console.log("entrando a logging api");    
-    var date = new Date;
-    var timestamp = date.getTime();
-    curl.get('http://54.163.75.163:3003/log/'+topic+'/'+userID+'/'+timestamp)
+    curl.get('http://54.163.75.163:3003/log/'+topic+'/'+userID)
     .then((res) => {
       console.log("Exito loginAPI");
     })
