@@ -95,7 +95,7 @@ app.get("/search/:topic/:userId?", (req, res) => {
           console.log('Redis');
           var redisResponse = result.toString().split(",");
           res.send({"Topic": topic, "Result": redisResponse, "UserId": reqId });
-          saveLogRedis(reqId, topic, result, "Redis");
+          //saveLogRedis(reqId, topic, result, "Redis");
       }
     });
 });
@@ -166,7 +166,7 @@ function saveLog(arr) {
   );
 }
 
-
+/*
 function saveLogRedis(userId, topic, result, source) {
   //Inserta log del request
   //console.log("saveLog base de datos");
@@ -177,7 +177,7 @@ function saveLogRedis(userId, topic, result, source) {
     }
   );
 }
-
+*/
 
 function fetchBooks(topic, callback) {
     books.search(topic, function(error, results) {
