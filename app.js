@@ -140,7 +140,6 @@ app.get("/fetch/:topic/:userId?", (req, res) => {
       if (!(res.headersSent)){
         res.send({"Topic": topic, "Result": newsResponse, "UserId": reqId});
       }
-      saveLog(reqId, topic, returnValue, "News");
     }
   });
 
@@ -150,7 +149,6 @@ app.get("/fetch/:topic/:userId?", (req, res) => {
       if (!(res.headersSent)){
         res.send({"Topic": topic, "Result": booksResponse, "UserId": reqId});
       }
-      saveLog(reqId, topic, returnValue, "Books");
     }
   }); 
 
@@ -160,7 +158,6 @@ app.get("/fetch/:topic/:userId?", (req, res) => {
       if (!(res.headersSent)){
         res.send({"Topic": topic, "Result": wikiResponse, "UserId": reqId});
       }
-      saveLog(reqId, topic, returnValue, "Wikipedia");
     }
   });
 
@@ -265,6 +262,7 @@ function fetchWiki(topic, callback) {
       callback(topArticles);
    });
 }
+
 
 function postToLoggingAPI(userID, topic) {
     console.log("entrando a logging api");    
