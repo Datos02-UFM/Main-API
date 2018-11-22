@@ -240,7 +240,7 @@ function fetchWiki(topic, callback) {
 
 function postToLoggingAPI(userID, topic) {
     console.log("entrando a logging api");    
-    curl.get('http://54.163.75.163:3003/log/'+topic+'/'+userID)
+    curl.get('http://54.163.75.163:3000/log/'+topic+'/'+userID)
     .then((res) => {
       console.log("Exito loginAPI");
     })
