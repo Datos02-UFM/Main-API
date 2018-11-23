@@ -18,6 +18,8 @@ Our project consists on a Main API (this repository), which handles requests by 
 
 ### Architecture
 
+Architecture diagram:
+![](imgs/architecture.jpeg)
 
 ### Testing
 
